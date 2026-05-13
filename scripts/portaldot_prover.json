@@ -1,0 +1,1991 @@
+{
+  "source": {
+    "hash": "0x00009e58ef950835d823e1144e43c3d4d53b2861e65133b41dc4d21dfbb6a5d1",
+    "language": "ink! 5.0.0",
+    "compiler": "rustc 1.86.0-nightly",
+    "build_info": {
+      "build_mode": "Release",
+      "cargo_contract_version": "5.0.0",
+      "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
+      "wasm_opt_settings": {
+        "keep_debug_symbols": false,
+        "optimization_passes": "Z"
+      }
+    }
+  },
+  "contract": {
+    "name": "portaldot-prover",
+    "version": "0.1.0",
+    "authors": [
+      "PortaldotProver Team"
+    ]
+  },
+  "image": null,
+  "spec": {
+    "constructors": [
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "new",
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink_primitives",
+            "ConstructorResult"
+          ],
+          "type": 22
+        },
+        "selector": "0x9bae9d5e"
+      }
+    ],
+    "docs": [],
+    "environment": {
+      "accountId": {
+        "displayName": [
+          "AccountId"
+        ],
+        "type": 1
+      },
+      "balance": {
+        "displayName": [
+          "Balance"
+        ],
+        "type": 6
+      },
+      "blockNumber": {
+        "displayName": [
+          "BlockNumber"
+        ],
+        "type": 0
+      },
+      "chainExtension": {
+        "displayName": [
+          "ChainExtension"
+        ],
+        "type": 43
+      },
+      "hash": {
+        "displayName": [
+          "Hash"
+        ],
+        "type": 4
+      },
+      "maxEventTopics": 4,
+      "staticBufferSize": 16384,
+      "timestamp": {
+        "displayName": [
+          "Timestamp"
+        ],
+        "type": 42
+      }
+    },
+    "events": [
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "creator",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "price",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 6
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "stake",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [],
+        "label": "ModelRegistered",
+        "module_path": "portaldot_prover::portaldot_prover",
+        "signature_topic": "0x63b66405881357f68cd68cd38e287e43121590d91e6973580898a3c6468d3764"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "buyer",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "amount_paid",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [],
+        "label": "AccessPurchased",
+        "module_path": "portaldot_prover::portaldot_prover",
+        "signature_topic": "0x8fd5abe013512bf08210922e27840e3866b81a0d06edf3c2b93ed1b7be30d8d2"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "verifier",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "input_hash",
+            "type": {
+              "displayName": [
+                "Hash"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "proof_hash",
+            "type": {
+              "displayName": [
+                "Hash"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [],
+        "label": "InferenceVerified",
+        "module_path": "portaldot_prover::portaldot_prover",
+        "signature_topic": "0x06f0d0fe0bc2d7dd13734a9d3ad5e23fc72e346d351046bb311c204709623f9e"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "creator",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [],
+        "label": "EarningsWithdrawn",
+        "module_path": "portaldot_prover::portaldot_prover",
+        "signature_topic": "0x475502e13343684441886cab24a8d2b935bcbbb597e248c4feb9f3233be91ed4"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": true,
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "ModelDeactivated",
+        "module_path": "portaldot_prover::portaldot_prover",
+        "signature_topic": "0x925fe232012817e3f09979d5532c8458054c7626244d13e04abefb6cb827033e"
+      }
+    ],
+    "lang_error": {
+      "displayName": [
+        "ink",
+        "LangError"
+      ],
+      "type": 23
+    },
+    "messages": [
+      {
+        "args": [
+          {
+            "label": "model_hash",
+            "type": {
+              "displayName": [
+                "Hash"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "metadata",
+            "type": {
+              "displayName": [
+                "String"
+              ],
+              "type": 5
+            }
+          },
+          {
+            "label": "price",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "register_model",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 24
+        },
+        "selector": "0x70752f47"
+      },
+      {
+        "args": [
+          {
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "purchase_access",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x104372fa"
+      },
+      {
+        "args": [
+          {
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "input_hash",
+            "type": {
+              "displayName": [
+                "Hash"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "verify_inference",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0x10f53c8c"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "withdraw_earnings",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0x706391cb"
+      },
+      {
+        "args": [
+          {
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "deactivate_model",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0xd8fdaf19"
+      },
+      {
+        "args": [
+          {
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "get_model",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 34
+        },
+        "selector": "0x845c9da0"
+      },
+      {
+        "args": [
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "label": "model_id",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "has_access",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 36
+        },
+        "selector": "0x07403bb3"
+      },
+      {
+        "args": [
+          {
+            "label": "creator",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "get_earnings",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 37
+        },
+        "selector": "0x22a3a596"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "get_stats",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 38
+        },
+        "selector": "0x0b58aa38"
+      },
+      {
+        "args": [
+          {
+            "label": "offset",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "limit",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "list_model_ids",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 40
+        },
+        "selector": "0x988ffca0"
+      }
+    ]
+  },
+  "storage": {
+    "root": {
+      "layout": {
+        "struct": {
+          "fields": [
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
+                }
+              },
+              "name": "next_model_id"
+            },
+            {
+              "layout": {
+                "root": {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 0
+                            }
+                          },
+                          "name": "id"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 1
+                            }
+                          },
+                          "name": "creator"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 4
+                            }
+                          },
+                          "name": "model_hash"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 5
+                            }
+                          },
+                          "name": "metadata"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 6
+                            }
+                          },
+                          "name": "price"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 6
+                            }
+                          },
+                          "name": "stake"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 0
+                            }
+                          },
+                          "name": "total_purchases"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 0
+                            }
+                          },
+                          "name": "total_verifications"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 7
+                            }
+                          },
+                          "name": "is_active"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x6940d7c8",
+                              "ty": 0
+                            }
+                          },
+                          "name": "registered_at"
+                        }
+                      ],
+                      "name": "ModelInfo"
+                    }
+                  },
+                  "root_key": "0x6940d7c8",
+                  "ty": 8
+                }
+              },
+              "name": "models"
+            },
+            {
+              "layout": {
+                "root": {
+                  "layout": {
+                    "leaf": {
+                      "key": "0x6cb67585",
+                      "ty": 7
+                    }
+                  },
+                  "root_key": "0x6cb67585",
+                  "ty": 14
+                }
+              },
+              "name": "access_rights"
+            },
+            {
+              "layout": {
+                "root": {
+                  "layout": {
+                    "leaf": {
+                      "key": "0x4dd7db23",
+                      "ty": 6
+                    }
+                  },
+                  "root_key": "0x4dd7db23",
+                  "ty": 18
+                }
+              },
+              "name": "creator_earnings"
+            },
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 1
+                }
+              },
+              "name": "owner"
+            },
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
+                }
+              },
+              "name": "total_models"
+            },
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 6
+                }
+              },
+              "name": "total_volume"
+            }
+          ],
+          "name": "PortaldotProver"
+        }
+      },
+      "root_key": "0x00000000",
+      "ty": 21
+    }
+  },
+  "types": [
+    {
+      "id": 0,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    },
+    {
+      "id": 1,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 2,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        },
+        "path": [
+          "ink_primitives",
+          "types",
+          "AccountId"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "array": {
+            "len": 32,
+            "type": 3
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 2,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        },
+        "path": [
+          "ink_primitives",
+          "types",
+          "Hash"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": {
+        "def": {
+          "primitive": "str"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": {
+        "def": {
+          "primitive": "bool"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "K",
+            "type": 0
+          },
+          {
+            "name": "V",
+            "type": 9
+          },
+          {
+            "name": "KeyType",
+            "type": 10
+          }
+        ],
+        "path": [
+          "ink_storage",
+          "lazy",
+          "mapping",
+          "Mapping"
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "id",
+                "type": 0,
+                "typeName": "u32"
+              },
+              {
+                "name": "creator",
+                "type": 1,
+                "typeName": "AccountId"
+              },
+              {
+                "name": "model_hash",
+                "type": 4,
+                "typeName": "Hash"
+              },
+              {
+                "name": "metadata",
+                "type": 5,
+                "typeName": "String"
+              },
+              {
+                "name": "price",
+                "type": 6,
+                "typeName": "Balance"
+              },
+              {
+                "name": "stake",
+                "type": 6,
+                "typeName": "Balance"
+              },
+              {
+                "name": "total_purchases",
+                "type": 0,
+                "typeName": "u32"
+              },
+              {
+                "name": "total_verifications",
+                "type": 0,
+                "typeName": "u32"
+              },
+              {
+                "name": "is_active",
+                "type": 7,
+                "typeName": "bool"
+              },
+              {
+                "name": "registered_at",
+                "type": 0,
+                "typeName": "BlockNumber"
+              }
+            ]
+          }
+        },
+        "path": [
+          "portaldot_prover",
+          "portaldot_prover",
+          "ModelInfo"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "L",
+            "type": 11
+          },
+          {
+            "name": "R",
+            "type": 12
+          }
+        ],
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "AutoKey"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 13
+          }
+        ],
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "K",
+            "type": 15
+          },
+          {
+            "name": "V",
+            "type": 7
+          },
+          {
+            "name": "KeyType",
+            "type": 16
+          }
+        ],
+        "path": [
+          "ink_storage",
+          "lazy",
+          "mapping",
+          "Mapping"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "def": {
+          "tuple": [
+            1,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "L",
+            "type": 11
+          },
+          {
+            "name": "R",
+            "type": 17
+          }
+        ],
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 13
+          }
+        ],
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "K",
+            "type": 1
+          },
+          {
+            "name": "V",
+            "type": 6
+          },
+          {
+            "name": "KeyType",
+            "type": 19
+          }
+        ],
+        "path": [
+          "ink_storage",
+          "lazy",
+          "mapping",
+          "Mapping"
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "L",
+            "type": 11
+          },
+          {
+            "name": "R",
+            "type": 20
+          }
+        ],
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 13
+          }
+        ],
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "next_model_id",
+                "type": 0,
+                "typeName": "<u32 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<1150026542u32, ()>,>>::Type"
+              },
+              {
+                "name": "models",
+                "type": 8,
+                "typeName": "<Mapping<u32, ModelInfo> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<3369549929u32,\n()>,>>::Type"
+              },
+              {
+                "name": "access_rights",
+                "type": 14,
+                "typeName": "<Mapping<(AccountId, u32), bool> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2239084140u32,\n()>,>>::Type"
+              },
+              {
+                "name": "creator_earnings",
+                "type": 18,
+                "typeName": "<Mapping<AccountId, Balance> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<601610061u32, ()\n>,>>::Type"
+              },
+              {
+                "name": "owner",
+                "type": 1,
+                "typeName": "<AccountId as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1674952042u32, ()>,>>::Type"
+              },
+              {
+                "name": "total_models",
+                "type": 0,
+                "typeName": "<u32 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<81097921u32, ()>,>>::Type"
+              },
+              {
+                "name": "total_volume",
+                "type": 6,
+                "typeName": "<Balance as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<3193127606u32, ()>,>>::Type"
+              }
+            ]
+          }
+        },
+        "path": [
+          "portaldot_prover",
+          "portaldot_prover",
+          "PortaldotProver"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 13
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 1,
+                "name": "CouldNotReadInput"
+              }
+            ]
+          }
+        },
+        "path": [
+          "ink_primitives",
+          "LangError"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 25
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 25
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "StakeTooLow"
+              },
+              {
+                "index": 1,
+                "name": "PriceTooLow"
+              },
+              {
+                "index": 2,
+                "name": "ModelNotFound"
+              },
+              {
+                "index": 3,
+                "name": "ModelNotActive"
+              },
+              {
+                "index": 4,
+                "name": "InsufficientPayment"
+              },
+              {
+                "index": 5,
+                "name": "AccessNotGranted"
+              },
+              {
+                "index": 6,
+                "name": "NotCreator"
+              },
+              {
+                "index": 7,
+                "name": "MetadataTooLong"
+              },
+              {
+                "index": 8,
+                "name": "TransferFailed"
+              },
+              {
+                "index": 9,
+                "name": "Overflow"
+              }
+            ]
+          }
+        },
+        "path": [
+          "portaldot_prover",
+          "portaldot_prover",
+          "Error"
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 28
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 13
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 30
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 30
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 31
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 31
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "model_id",
+                "type": 0,
+                "typeName": "u32"
+              },
+              {
+                "name": "verifier",
+                "type": 1,
+                "typeName": "AccountId"
+              },
+              {
+                "name": "input_hash",
+                "type": 4,
+                "typeName": "Hash"
+              },
+              {
+                "name": "proof_hash",
+                "type": 4,
+                "typeName": "Hash"
+              },
+              {
+                "name": "verified_at",
+                "type": 0,
+                "typeName": "BlockNumber"
+              }
+            ]
+          }
+        },
+        "path": [
+          "portaldot_prover",
+          "portaldot_prover",
+          "VerificationProof"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 33
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 33
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 33,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 34,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 35
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 35
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 7
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 37,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 39
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 39
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 39,
+      "type": {
+        "def": {
+          "tuple": [
+            0,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "id": 40,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 41
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 41
+          },
+          {
+            "name": "E",
+            "type": 23
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 0
+          }
+        }
+      }
+    },
+    {
+      "id": 42,
+      "type": {
+        "def": {
+          "primitive": "u64"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "type": {
+        "def": {
+          "variant": {}
+        },
+        "path": [
+          "ink_env",
+          "types",
+          "NoChainExtension"
+        ]
+      }
+    }
+  ],
+  "version": 5
+}

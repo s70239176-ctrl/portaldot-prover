@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "dockerfilePath": "Dockerfile.node"
+  },
+  "deploy": {
+    "startCommand": "./substrate-contracts-node --dev --ws-external --rpc-external --rpc-cors=all --rpc-methods=unsafe",
+    "healthcheckPath": null,
+    "restartPolicyType": "always"
+  }
+}

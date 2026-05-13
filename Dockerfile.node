@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install -y \
+    curl wget ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /node
+
+# Download substrate-contracts-node at build time
+RUN wget -q -O node.tar.gz \
+    "https://github.com/paritytech/substrate-contracts-node/releases/download/v0.41.0/substrate-contracts-node-linux.tar.gz" \
+    && tar -xzvf node.tar.gz \
+    && mv artifacts/substrate-contracts-node-linux/substrate-contracts-node ./substrate-contracts-node \
+    && chmod +x substrate-contracts-node \
+    && rm -rf node.tar.gz artifacts
+
+EXPOSE 9944
+
+# --dev gives pre-funded Alice/Bob accounts
+# --ws-external allows connections from outside the container
+# --rpc-external exposes RPC
+CMD ["./substrate-contracts-node", \
+     "--dev", \
+     "--ws-external", \
+     "--rpc-external", \
+     "--rpc-cors=all", \
+     "--rpc-methods=unsafe"]

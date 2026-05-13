@@ -7,3 +7,8 @@ local-node/portaldot-testnet-ubuntu/*.tar.gz
 
 # Rust build artifacts
 contract/*/target/
+
+# Keep these for Railway deployment
+!scripts/portaldot_prover.wasm
+!scripts/portaldot_prover.json
+!scripts/deployment.json

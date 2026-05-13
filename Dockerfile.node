@@ -12,13 +12,14 @@ RUN curl -L -o node.tar.gz \
     && tar -xzvf node.tar.gz \
     && find . -name "substrate-contracts-node" -type f -exec mv {} ./substrate-contracts-node \; \
     && chmod +x substrate-contracts-node \
-    && rm -rf node.tar.gz artifacts \
-    && ./substrate-contracts-node --version
+    && rm -rf node.tar.gz artifacts
 
 EXPOSE 9944
 
-CMD ["./substrate-contracts-node", \
-     "--dev", \
-     "--rpc-external", \
-     "--rpc-cors=all", \
-     "--rpc-methods=unsafe"]
+# Use PORT env var if set by Railway TCP proxy, otherwise default 9944
+CMD sh -c "./substrate-contracts-node \
+    --dev \
+    --rpc-external \
+    --rpc-cors=all \
+    --rpc-methods=unsafe \
+    --rpc-port=${PORT:-9944}"

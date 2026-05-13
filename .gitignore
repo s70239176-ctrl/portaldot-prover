@@ -1,0 +1,9 @@
+
+# Large node binaries — download separately (see README)
+local-node/artifacts/
+local-node/portaldot-testnet-ubuntu/portaldot_dev
+local-node/*.tar.gz
+local-node/portaldot-testnet-ubuntu/*.tar.gz
+
+# Rust build artifacts
+contract/*/target/

@@ -1,14 +1,26 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
+
+# Copy package files
 COPY frontend/package*.json ./
 RUN npm ci
 
+# Copy ALL frontend source
 COPY frontend/ ./
 
-# Build args become env vars at build time
+# Verify our pages exist before building
+RUN ls -la src/app/ && \
+    ls -la src/app/register/ && \
+    ls -la src/app/marketplace/ && \
+    ls -la src/app/verify/
+
+# Set build args
 ARG NEXT_PUBLIC_WS_ENDPOINT
 ARG NEXT_PUBLIC_CONTRACT_ADDRESS
+
+ENV NEXT_PUBLIC_WS_ENDPOINT=$NEXT_PUBLIC_WS_ENDPOINT
+ENV NEXT_PUBLIC_CONTRACT_ADDRESS=$NEXT_PUBLIC_CONTRACT_ADDRESS
 
 RUN npm run build
 
@@ -16,13 +28,12 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
 CMD ["node", "server.js"]

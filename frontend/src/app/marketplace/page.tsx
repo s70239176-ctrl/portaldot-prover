@@ -186,7 +186,7 @@ export default function MarketplacePage() {
                   </div>
                 </div>
 
-                {msg?.id===m.id&&(
+                {msg?.id===m.id&&msg&&(
                   <div style={{
                     marginTop:16, padding:"10px 14px", borderRadius:8, fontSize:13,
                     background:msg.ok?"rgba(16,185,129,0.1)":"rgba(239,68,68,0.1)",

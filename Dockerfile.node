@@ -1,58 +1,10 @@
-FROM node:20-alpine AS wsproxy
-
-WORKDIR /proxy
-
-# Create a simple WebSocket proxy that bridges HTTPS->WS
-RUN cat > package.json << 'JSON'
-{"name":"ws-proxy","version":"1.0.0","dependencies":{"http-proxy":"^1.18.1","ws":"^8.18.0"}}
-JSON
-
-RUN cat > proxy.js << 'JS'
-const http = require("http");
-const httpProxy = require("http-proxy");
-const { WebSocketServer } = require("ws");
-
-const TARGET = "http://127.0.0.1:9944";
-const PORT = process.env.PORT || 8080;
-
-const proxy = httpProxy.createProxyServer({ target: TARGET, ws: true });
-
-const server = http.createServer((req, res) => {
-  proxy.web(req, res, {}, (e) => {
-    res.writeHead(502);
-    res.end("Bad gateway: " + e.message);
-  });
-});
-
-server.on("upgrade", (req, socket, head) => {
-  proxy.ws(req, socket, head, {}, (e) => {
-    console.error("WS proxy error:", e.message);
-    socket.destroy();
-  });
-});
-
-proxy.on("error", (e, req, res) => {
-  console.error("Proxy error:", e.message);
-});
-
-server.listen(PORT, () => {
-  console.log(`WebSocket proxy listening on port ${PORT}`);
-  console.log(`Proxying to ${TARGET}`);
-});
-JS
-
-RUN npm install
-
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y \
-    curl ca-certificates tar \
-    && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js for the proxy
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+RUN apt-get update && apt-get install -y \
+    curl ca-certificates tar nodejs npm \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -61,16 +13,42 @@ RUN curl -L -o node.tar.gz \
     "https://github.com/paritytech/substrate-contracts-node/releases/download/v0.41.0/substrate-contracts-node-linux.tar.gz" \
     && tar -xzvf node.tar.gz \
     && find . -name "substrate-contracts-node" -type f -exec mv {} ./substrate-contracts-node \; \
-    && chmod +x substrate-contracts-node \
-    && rm -rf node.tar.gz artifacts
+    && chmod +x ./substrate-contracts-node \
+    && rm -rf node.tar.gz artifacts \
+    && ./substrate-contracts-node --version
 
-# Copy proxy
-COPY --from=wsproxy /proxy /proxy
+# Install ws-proxy inline
+RUN npm install http-proxy ws
 
-# Start script: run node on 9944 + proxy on PORT
-RUN cat > start.sh << 'BASH'
+COPY <<'JSEOF' proxy.js
+const http = require("http");
+const httpProxy = require("http-proxy");
+
+const TARGET = "http://127.0.0.1:9944";
+const PORT = process.env.PORT || 8080;
+
+const proxy = httpProxy.createProxyServer({ target: TARGET, ws: true });
+
+proxy.on("error", (e) => console.error("Proxy error:", e.message));
+
+const server = http.createServer((req, res) => {
+  proxy.web(req, res);
+});
+
+server.on("upgrade", (req, socket, head) => {
+  proxy.ws(req, socket, head);
+});
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log("Proxy listening on port " + PORT);
+});
+JSEOF
+
+COPY <<'SHEOF' start.sh
 #!/bin/sh
-echo "Starting substrate-contracts-node on port 9944..."
+set -e
+
+echo "==> Starting substrate-contracts-node on :9944"
 ./substrate-contracts-node \
   --dev \
   --rpc-external \
@@ -78,20 +56,26 @@ echo "Starting substrate-contracts-node on port 9944..."
   --rpc-methods=unsafe \
   --rpc-port=9944 &
 
-echo "Waiting for node to start..."
-# Wait until node is actually responding before starting proxy
-for i in $(seq 1 30); do
-  if curl -s -X POST -H "Content-Type: application/json"     -d '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}'     http://127.0.0.1:9944 > /dev/null 2>&1; then
-    echo "Node is ready after ${i} seconds"
-    break
+NODE_PID=$!
+echo "==> Node PID: $NODE_PID"
+
+echo "==> Waiting for node RPC..."
+TRIES=0
+until curl -sf -X POST -H "Content-Type: application/json" \
+  -d '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}' \
+  http://127.0.0.1:9944 > /dev/null; do
+  TRIES=$((TRIES+1))
+  if [ $TRIES -gt 30 ]; then
+    echo "==> Node failed to start after 60s"
+    exit 1
   fi
-  echo "Waiting for node... attempt ${i}"
+  echo "==> Attempt $TRIES — waiting 2s..."
   sleep 2
 done
 
-echo "Starting WebSocket proxy on port ${PORT}..."
-cd /proxy && node proxy.js
-BASH
+echo "==> Node ready! Starting proxy on :${PORT}"
+exec node proxy.js
+SHEOF
 
 RUN chmod +x start.sh
 

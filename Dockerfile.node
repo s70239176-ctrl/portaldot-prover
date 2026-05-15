@@ -15,47 +15,29 @@ RUN curl -L -o node.tar.gz \
     && chmod +x ./substrate-contracts-node \
     && rm -rf node.tar.gz artifacts
 
-RUN npm install http-proxy ws
+RUN npm install http-proxy @polkadot/api @polkadot/keyring @polkadot/util @polkadot/util-crypto
+
+# Copy WASM and auto-deploy script
+COPY scripts/portaldot_prover.wasm ./portaldot_prover.wasm
+COPY scripts/auto-deploy.mjs ./auto-deploy.mjs
 
 RUN cat > proxy.js << 'JSEOF'
 const http = require("http");
 const httpProxy = require("http-proxy");
-
 const NODE_PORT = 9944;
-// If PORT is same as NODE_PORT, use 3000 instead
 const RAW_PORT = parseInt(process.env.PORT || "3000");
 const PROXY_PORT = RAW_PORT === NODE_PORT ? 3000 : RAW_PORT;
-
-console.log("==> Substrate node running on:", NODE_PORT);
-console.log("==> Proxy PORT env:", process.env.PORT);
-console.log("==> Proxy listening on:", PROXY_PORT);
-
-const proxy = httpProxy.createProxyServer({
-  target: "http://127.0.0.1:" + NODE_PORT,
-  ws: true,
-});
-
+console.log("==> Proxy on:", PROXY_PORT, "-> Node on:", NODE_PORT);
+const proxy = httpProxy.createProxyServer({ target: "http://127.0.0.1:" + NODE_PORT, ws: true });
 proxy.on("error", (e) => console.error("Proxy error:", e.message));
-
-const server = http.createServer((req, res) => {
-  proxy.web(req, res);
-});
-
-server.on("upgrade", (req, socket, head) => {
-  console.log("WS upgrade request:", req.url);
-  proxy.ws(req, socket, head);
-});
-
-server.listen(PROXY_PORT, "0.0.0.0", () => {
-  console.log("==> Proxy ready! WebSocket connections accepted.");
-});
+const server = http.createServer((req, res) => { proxy.web(req, res); });
+server.on("upgrade", (req, socket, head) => { proxy.ws(req, socket, head); });
+server.listen(PROXY_PORT, "0.0.0.0", () => console.log("==> Proxy ready on port " + PROXY_PORT));
 JSEOF
 
 RUN cat > start.sh << 'SHEOF'
 #!/bin/sh
-echo "==> Starting node on :9944, proxy on :3000"
-echo "==> PORT env is: ${PORT}"
-
+echo "==> Starting substrate-contracts-node on :9944"
 ./substrate-contracts-node \
   --dev \
   --rpc-external \
@@ -63,6 +45,7 @@ echo "==> PORT env is: ${PORT}"
   --rpc-methods=unsafe \
   --rpc-port=9944 &
 
+echo "==> Waiting for node..."
 TRIES=0
 until curl -sf -X POST -H "Content-Type: application/json" \
   -d '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}' \
@@ -73,7 +56,10 @@ until curl -sf -X POST -H "Content-Type: application/json" \
   sleep 2
 done
 
-echo "==> Node ready! Starting proxy..."
+echo "==> Node ready! Auto-deploying contract..."
+node auto-deploy.mjs &
+
+echo "==> Starting proxy on :${PORT}..."
 exec node proxy.js
 SHEOF
 

@@ -79,7 +79,15 @@ echo "Starting substrate-contracts-node on port 9944..."
   --rpc-port=9944 &
 
 echo "Waiting for node to start..."
-sleep 8
+# Wait until node is actually responding before starting proxy
+for i in $(seq 1 30); do
+  if curl -s -X POST -H "Content-Type: application/json"     -d '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}'     http://127.0.0.1:9944 > /dev/null 2>&1; then
+    echo "Node is ready after ${i} seconds"
+    break
+  fi
+  echo "Waiting for node... attempt ${i}"
+  sleep 2
+done
 
 echo "Starting WebSocket proxy on port ${PORT}..."
 cd /proxy && node proxy.js

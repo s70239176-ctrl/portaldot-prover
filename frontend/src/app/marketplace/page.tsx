@@ -53,11 +53,9 @@ export default function MarketplacePage() {
       await api.isReady;
       const contract = new ContractPromise(api,ABI,CONTRACT);
       const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")});
-      const { Keyring } = await import("@polkadot/keyring");
-      const { u8aToHex } = await import("@polkadot/util");
-      const kr = new Keyring({type:"sr25519",ss58Format:42});
-      const bob = kr.addFromUri("//Bob");
-      const signer={signPayload:async(p:any)=>({id:p.id,signature:u8aToHex(bob.sign(p.data))})};
+      const { getBobSigner } = await import("@/lib/signer");
+      const { address: bobAddress, signer } = await getBobSigner();
+      const bob = { address: bobAddress };
       const price=BigInt(m.price.replace(/,/g,""));
       await new Promise<void>((resolve,reject)=>{
         let unsub:any;

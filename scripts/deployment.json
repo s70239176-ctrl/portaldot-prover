@@ -1,5 +1,5 @@
 {
   "contractAddress": "5GZHjR8LxURHbu17HWeQTB4CQWZAWJvbCcvsAymEUK7zyEuq",
-  "network": "ws://yamanote.proxy.rlwy.net:27654",
-  "deployedAt": "2026-05-13T20:56:20.924Z"
+  "network": "wss://portaldot-prover-production.up.railway.app",
+  "deployedAt": "2026-05-15T11:57:09.544Z"
 }

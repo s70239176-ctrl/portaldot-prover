@@ -21,13 +21,14 @@ RUN cat > proxy.js << 'JSEOF'
 const http = require("http");
 const httpProxy = require("http-proxy");
 
-// Node always runs on 9944
-// Proxy listens on PORT (set by Railway) — must be different from 9944
 const NODE_PORT = 9944;
-const PROXY_PORT = process.env.PORT || 3000;
+// If PORT is same as NODE_PORT, use 3000 instead
+const RAW_PORT = parseInt(process.env.PORT || "3000");
+const PROXY_PORT = RAW_PORT === NODE_PORT ? 3000 : RAW_PORT;
 
-console.log("Node port:", NODE_PORT);
-console.log("Proxy port:", PROXY_PORT);
+console.log("==> Substrate node running on:", NODE_PORT);
+console.log("==> Proxy PORT env:", process.env.PORT);
+console.log("==> Proxy listening on:", PROXY_PORT);
 
 const proxy = httpProxy.createProxyServer({
   target: "http://127.0.0.1:" + NODE_PORT,
@@ -41,18 +42,20 @@ const server = http.createServer((req, res) => {
 });
 
 server.on("upgrade", (req, socket, head) => {
+  console.log("WS upgrade request:", req.url);
   proxy.ws(req, socket, head);
 });
 
 server.listen(PROXY_PORT, "0.0.0.0", () => {
-  console.log("==> Proxy listening on port " + PROXY_PORT);
-  console.log("==> Forwarding to node on port " + NODE_PORT);
+  console.log("==> Proxy ready! WebSocket connections accepted.");
 });
 JSEOF
 
 RUN cat > start.sh << 'SHEOF'
 #!/bin/sh
-echo "==> Starting substrate-contracts-node on :9944"
+echo "==> Starting node on :9944, proxy on :3000"
+echo "==> PORT env is: ${PORT}"
+
 ./substrate-contracts-node \
   --dev \
   --rpc-external \
@@ -60,18 +63,17 @@ echo "==> Starting substrate-contracts-node on :9944"
   --rpc-methods=unsafe \
   --rpc-port=9944 &
 
-echo "==> Waiting for node..."
 TRIES=0
 until curl -sf -X POST -H "Content-Type: application/json" \
   -d '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}' \
   http://127.0.0.1:9944 > /dev/null 2>&1; do
   TRIES=$((TRIES+1))
   if [ $TRIES -gt 30 ]; then echo "Node failed to start"; exit 1; fi
-  echo "Waiting... attempt $TRIES"
+  echo "Waiting... $TRIES"
   sleep 2
 done
 
-echo "==> Node ready on :9944, starting proxy on :${PORT}"
+echo "==> Node ready! Starting proxy..."
 exec node proxy.js
 SHEOF
 

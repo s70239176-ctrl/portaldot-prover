@@ -1,3 +1,48 @@
+FROM node:20-alpine AS wsproxy
+
+WORKDIR /proxy
+
+# Create a simple WebSocket proxy that bridges HTTPS->WS
+RUN cat > package.json << 'JSON'
+{"name":"ws-proxy","version":"1.0.0","dependencies":{"http-proxy":"^1.18.1","ws":"^8.18.0"}}
+JSON
+
+RUN cat > proxy.js << 'JS'
+const http = require("http");
+const httpProxy = require("http-proxy");
+const { WebSocketServer } = require("ws");
+
+const TARGET = "http://127.0.0.1:9944";
+const PORT = process.env.PORT || 8080;
+
+const proxy = httpProxy.createProxyServer({ target: TARGET, ws: true });
+
+const server = http.createServer((req, res) => {
+  proxy.web(req, res, {}, (e) => {
+    res.writeHead(502);
+    res.end("Bad gateway: " + e.message);
+  });
+});
+
+server.on("upgrade", (req, socket, head) => {
+  proxy.ws(req, socket, head, {}, (e) => {
+    console.error("WS proxy error:", e.message);
+    socket.destroy();
+  });
+});
+
+proxy.on("error", (e, req, res) => {
+  console.error("Proxy error:", e.message);
+});
+
+server.listen(PORT, () => {
+  console.log(`WebSocket proxy listening on port ${PORT}`);
+  console.log(`Proxying to ${TARGET}`);
+});
+JS
+
+RUN npm install
+
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -5,8 +50,13 @@ RUN apt-get update && apt-get install -y \
     curl ca-certificates tar \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /node
+# Install Node.js for the proxy
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
+WORKDIR /app
+
+# Download substrate-contracts-node
 RUN curl -L -o node.tar.gz \
     "https://github.com/paritytech/substrate-contracts-node/releases/download/v0.41.0/substrate-contracts-node-linux.tar.gz" \
     && tar -xzvf node.tar.gz \
@@ -14,12 +64,28 @@ RUN curl -L -o node.tar.gz \
     && chmod +x substrate-contracts-node \
     && rm -rf node.tar.gz artifacts
 
-EXPOSE 9944
+# Copy proxy
+COPY --from=wsproxy /proxy /proxy
 
-# Use PORT env var if set by Railway TCP proxy, otherwise default 9944
-CMD sh -c "./substrate-contracts-node \
-    --dev \
-    --rpc-external \
-    --rpc-cors=all \
-    --rpc-methods=unsafe \
-    --rpc-port=${PORT:-9944}"
+# Start script: run node on 9944 + proxy on PORT
+RUN cat > start.sh << 'BASH'
+#!/bin/sh
+echo "Starting substrate-contracts-node on port 9944..."
+./substrate-contracts-node \
+  --dev \
+  --rpc-external \
+  --rpc-cors=all \
+  --rpc-methods=unsafe \
+  --rpc-port=9944 &
+
+echo "Waiting for node to start..."
+sleep 8
+
+echo "Starting WebSocket proxy on port ${PORT}..."
+cd /proxy && node proxy.js
+BASH
+
+RUN chmod +x start.sh
+
+EXPOSE 8080
+CMD ["./start.sh"]

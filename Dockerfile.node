@@ -8,26 +8,31 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Download substrate-contracts-node
 RUN curl -L -o node.tar.gz \
     "https://github.com/paritytech/substrate-contracts-node/releases/download/v0.41.0/substrate-contracts-node-linux.tar.gz" \
     && tar -xzvf node.tar.gz \
     && find . -name "substrate-contracts-node" -type f -exec mv {} ./substrate-contracts-node \; \
     && chmod +x ./substrate-contracts-node \
-    && rm -rf node.tar.gz artifacts \
-    && ./substrate-contracts-node --version
+    && rm -rf node.tar.gz artifacts
 
-# Install ws-proxy inline
 RUN npm install http-proxy ws
 
-COPY <<'JSEOF' proxy.js
+RUN cat > proxy.js << 'JSEOF'
 const http = require("http");
 const httpProxy = require("http-proxy");
 
-const TARGET = "http://127.0.0.1:9944";
-const PORT = process.env.PORT || 8080;
+// Node always runs on 9944
+// Proxy listens on PORT (set by Railway) — must be different from 9944
+const NODE_PORT = 9944;
+const PROXY_PORT = process.env.PORT || 3000;
 
-const proxy = httpProxy.createProxyServer({ target: TARGET, ws: true });
+console.log("Node port:", NODE_PORT);
+console.log("Proxy port:", PROXY_PORT);
+
+const proxy = httpProxy.createProxyServer({
+  target: "http://127.0.0.1:" + NODE_PORT,
+  ws: true,
+});
 
 proxy.on("error", (e) => console.error("Proxy error:", e.message));
 
@@ -39,15 +44,14 @@ server.on("upgrade", (req, socket, head) => {
   proxy.ws(req, socket, head);
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log("Proxy listening on port " + PORT);
+server.listen(PROXY_PORT, "0.0.0.0", () => {
+  console.log("==> Proxy listening on port " + PROXY_PORT);
+  console.log("==> Forwarding to node on port " + NODE_PORT);
 });
 JSEOF
 
-COPY <<'SHEOF' start.sh
+RUN cat > start.sh << 'SHEOF'
 #!/bin/sh
-set -e
-
 echo "==> Starting substrate-contracts-node on :9944"
 ./substrate-contracts-node \
   --dev \
@@ -56,28 +60,22 @@ echo "==> Starting substrate-contracts-node on :9944"
   --rpc-methods=unsafe \
   --rpc-port=9944 &
 
-NODE_PID=$!
-echo "==> Node PID: $NODE_PID"
-
-echo "==> Waiting for node RPC..."
+echo "==> Waiting for node..."
 TRIES=0
 until curl -sf -X POST -H "Content-Type: application/json" \
   -d '{"id":1,"jsonrpc":"2.0","method":"system_health","params":[]}' \
-  http://127.0.0.1:9944 > /dev/null; do
+  http://127.0.0.1:9944 > /dev/null 2>&1; do
   TRIES=$((TRIES+1))
-  if [ $TRIES -gt 30 ]; then
-    echo "==> Node failed to start after 60s"
-    exit 1
-  fi
-  echo "==> Attempt $TRIES — waiting 2s..."
+  if [ $TRIES -gt 30 ]; then echo "Node failed to start"; exit 1; fi
+  echo "Waiting... attempt $TRIES"
   sleep 2
 done
 
-echo "==> Node ready! Starting proxy on :${PORT}"
+echo "==> Node ready on :9944, starting proxy on :${PORT}"
 exec node proxy.js
 SHEOF
 
 RUN chmod +x start.sh
 
-EXPOSE 8080
+EXPOSE 3000
 CMD ["./start.sh"]

@@ -23,7 +23,7 @@ export default function MarketplacePage() {
         const api = await ApiPromise.create({provider:new WsProvider(WS)});
         await api.isReady;
         const contract = new ContractPromise(api,ABI,CONTRACT);
-        const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")}) as any;
+        const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000") as any,proofSize:BigInt("1000000")}) as any;
         const caller = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
         const ir = await contract.query.listModelIds(caller,{gasLimit:gas},0,20);
         if(ir.result.isOk){
@@ -53,7 +53,7 @@ export default function MarketplacePage() {
       const api = await ApiPromise.create({provider:new WsProvider(WS)});
       await api.isReady;
       const contract = new ContractPromise(api,ABI,CONTRACT);
-      const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")}) as any;
+      const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000") as any,proofSize:BigInt("1000000")}) as any;
       const kr = new Keyring({type:"sr25519",ss58Format:42});
       const bob = kr.addFromUri("//Bob");
       const price = BigInt(m.price.replace(/,/g,""));

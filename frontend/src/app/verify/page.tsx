@@ -26,7 +26,7 @@ export default function VerifyPage() {
         const api=await ApiPromise.create({provider:new WsProvider(WS)});
         await api.isReady;
         const contract=new ContractPromise(api,ABI,CONTRACT);
-        const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")});
+        const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000") as any,proofSize:BigInt("1000000")});
         const r=await contract.query.hasAccess(caller,{gasLimit:gas},caller,Number(modelId));
         setHasAccess(r.result.isOk&&r.output?.toHuman()===true);
         await api.disconnect();
@@ -46,7 +46,7 @@ export default function VerifyPage() {
       const api=await ApiPromise.create({provider:new WsProvider(WS)});
       await api.isReady;
       const contract=new ContractPromise(api,ABI,CONTRACT);
-      const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")});
+      const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000") as any,proofSize:BigInt("1000000")});
       const kr=new Keyring({type:"sr25519",ss58Format:42});
       const alice=kr.addFromUri("//Alice");
       const inputHash=toHash(input);

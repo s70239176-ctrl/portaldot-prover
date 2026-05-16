@@ -40,7 +40,7 @@ export default function RegisterPage() {
     setStatus("loading"); setMessage("Submitting transaction...");
     try {
       const { api, contract, alice } = refs.current;
-      const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")}) as any;
+      const gas = api.registry.createType("WeightV2",{refTime:BigInt("30000000000") as any,proofSize:BigInt("1000000")}) as any;
       const metadata = JSON.stringify({name:form.name,description:form.desc,ipfs_cid:form.cid,version:form.version});
       const bytes = new TextEncoder().encode(form.name.padEnd(32,"\0").slice(0,32));
       const modelHash = "0x"+Array.from(bytes).map((b:number)=>b.toString(16).padStart(2,"0")).join("");

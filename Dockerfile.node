@@ -3,11 +3,18 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    curl ca-certificates tar nodejs npm \
+    curl ca-certificates tar \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20 (LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && node --version \
+    && npm --version
 
 WORKDIR /app
 
+# Download substrate-contracts-node
 RUN curl -L -o node.tar.gz \
     "https://github.com/paritytech/substrate-contracts-node/releases/download/v0.41.0/substrate-contracts-node-linux.tar.gz" \
     && tar -xzvf node.tar.gz \
@@ -15,6 +22,7 @@ RUN curl -L -o node.tar.gz \
     && chmod +x ./substrate-contracts-node \
     && rm -rf node.tar.gz artifacts
 
+# Install dependencies
 RUN npm install http-proxy @polkadot/api @polkadot/keyring @polkadot/util @polkadot/util-crypto
 
 # Copy WASM and auto-deploy script
@@ -57,7 +65,7 @@ until curl -sf -X POST -H "Content-Type: application/json" \
 done
 
 echo "==> Node ready! Auto-deploying contract..."
-node auto-deploy.mjs &
+node auto-deploy.mjs
 
 echo "==> Starting proxy on :${PORT}..."
 exec node proxy.js

@@ -41,9 +41,11 @@ export default function MarketplacePage() {
         const v = raw?.Ok || raw;
         if (v) out.push({id: Number(id), ...v});
 
-        const ar = await contract.query.hasAccess(caller, {gasLimit: gas}, caller, Number(id));
-        const accessRaw = ar.output?.toHuman();
-        acc[Number(id)] = accessRaw?.Ok === true;
+        // Check access for both Alice and Bob (dev accounts)
+        const arAlice = await contract.query.hasAccess(caller, {gasLimit: gas}, caller, Number(id));
+        const arBob = await contract.query.hasAccess(caller, {gasLimit: gas}, 
+          "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty", Number(id));
+        acc[Number(id)] = arAlice.output?.toHuman()?.Ok === true || arBob.output?.toHuman()?.Ok === true;
       }
       setModels(out);
       setAccess(acc);

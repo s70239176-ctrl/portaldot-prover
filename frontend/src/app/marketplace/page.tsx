@@ -43,7 +43,7 @@ export default function MarketplacePage() {
 
         const ar = await contract.query.hasAccess(caller, {gasLimit: gas}, caller, Number(id));
         const accessRaw = ar.output?.toHuman();
-        acc[Number(id)] = accessRaw === true || accessRaw?.Ok === true;
+        acc[Number(id)] = accessRaw?.Ok === true;
       }
       setModels(out);
       setAccess(acc);

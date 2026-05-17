@@ -29,7 +29,7 @@ export default function VerifyPage() {
         const contract=new ContractPromise(api,ABI,CONTRACT);
         const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")}) as any;
         const r=await contract.query.hasAccess(caller,{gasLimit:gas},caller,Number(modelId));
-        setHasAccess(r.result.isOk&&r.output?.toHuman()===true);
+        setHasAccess(r.result.isOk && r.output?.toHuman()?.Ok === true);
         await api.disconnect();
       }catch(e){console.error(e);}
     })();

@@ -28,8 +28,12 @@ export default function VerifyPage() {
         await api.isReady;
         const contract=new ContractPromise(api,ABI,CONTRACT);
         const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")}) as any;
-        const r=await contract.query.hasAccess(caller,{gasLimit:gas},caller,Number(modelId));
-        setHasAccess(r.result.isOk && r.output?.toHuman()?.Ok === true);
+        const bob = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty";
+        const rAlice=await contract.query.hasAccess(caller,{gasLimit:gas},caller,Number(modelId));
+        const rBob=await contract.query.hasAccess(caller,{gasLimit:gas},bob,Number(modelId));
+        const aliceHas = rAlice.result.isOk && rAlice.output?.toHuman()?.Ok === true;
+        const bobHas = rBob.result.isOk && rBob.output?.toHuman()?.Ok === true;
+        setHasAccess(aliceHas || bobHas);
         await api.disconnect();
       }catch(e){console.error(e);}
     })();
@@ -50,9 +54,16 @@ export default function VerifyPage() {
       const gas=api.registry.createType("WeightV2",{refTime:BigInt("30000000000"),proofSize:BigInt("1000000")}) as any;
       const kr=new Keyring({type:"sr25519",ss58Format:42});
       const alice=kr.addFromUri("//Alice");
+      const bob=kr.addFromUri("//Bob");
       const inputHash=toHash(input);
 
-      const dry=await contract.query.verifyInference(alice.address,{gasLimit:gas},Number(modelId),inputHash);
+      // Try Bob first (purchaser), fall back to Alice
+      const bobAccess = await contract.query.hasAccess(
+        alice.address,{gasLimit:gas},bob.address,Number(modelId)
+      );
+      const signer = bobAccess.output?.toHuman()?.Ok === true ? bob : alice;
+
+      const dry=await contract.query.verifyInference(signer.address,{gasLimit:gas},Number(modelId),inputHash);
       if(dry.result.isOk){
         const val=dry.output?.toHuman() as any;
         if(val?.Ok){
@@ -64,7 +75,7 @@ export default function VerifyPage() {
                 if(status.isInBlock){if(unsub)unsub();resolve();}
               }).then((u:any)=>{unsub=u;}).catch(reject);
           });
-          setProof({modelId:Number(modelId),verifier:alice.address,inputHash,
+          setProof({modelId:Number(modelId),verifier:signer.address,inputHash,
             proofHash:val.Ok.proofHash||val.Ok.proof_hash||"computed",
             verifiedAt:String(val.Ok.verifiedAt||val.Ok.verified_at||0)});
           setStatus("success");setMessage("Proof generated and stored on-chain!");

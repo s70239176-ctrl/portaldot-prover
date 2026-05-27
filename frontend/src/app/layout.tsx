@@ -25,7 +25,8 @@ function Navbar() {
   }, []);
 
   const links = [
-    { href: "/", label: "Dashboard" },
+    { href: "/", label: "Overview" },
+    { href: "/dashboard", label: "Dashboard" },
     { href: "/register", label: "Register" },
     { href: "/marketplace", label: "Marketplace" },
     { href: "/verify", label: "Verify" },

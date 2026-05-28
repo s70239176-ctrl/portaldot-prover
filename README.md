@@ -11,6 +11,16 @@ On-chain AI Model Verification & Marketplace — built for the Portaldot ecosyst
 
 ---
 
+## 🎬 Demo
+
+| | |
+|---|---|
+| **Live App** | https://glistening-encouragement-production-4dfd.up.railway.app |
+| **Demo Video** | https://youtu.be/rRSEFsuUUqU |
+| **Dashboard** | https://glistening-encouragement-production-4dfd.up.railway.app/dashboard |
+
+---
+
 ## 🎯 Problem Solved
 
 AI models lack:
@@ -232,7 +242,7 @@ cargo test
 
 ## 📹 Demo Video
 
-[▶️ Watch Demo](https://youtu.be/PLACEHOLDER)
+[▶️ Watch Demo](https://youtu.be/rRSEFsuUUqU)
 
 ---
 

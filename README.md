@@ -258,4 +258,4 @@ MIT © 2025 PortaldotProver Team
 
 ---
 
-*Built with ❤️ for the Portaldot Hackathon 2025*
+*Built with ❤️ for the Portaldot Hackathon 2026*

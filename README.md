@@ -254,7 +254,7 @@ Pull requests welcome. For major changes, open an issue first.
 
 ## 📄 License
 
-MIT © 2025 PortaldotProver Team
+MIT © 2026 PortaldotProver Team
 
 ---
 

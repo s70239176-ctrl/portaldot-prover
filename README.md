@@ -15,9 +15,9 @@ On-chain AI Model Verification & Marketplace — built for the Portaldot ecosyst
 
 | | |
 |---|---|
-| **Live App** | https://glistening-encouragement-production-4dfd.up.railway.app |
+| **Live App** | https://portalprover.up.railway.app |
 | **Demo Video** | https://youtu.be/rRSEFsuUUqU |
-| **Dashboard** | https://glistening-encouragement-production-4dfd.up.railway.app/dashboard |
+| **Dashboard** | https://portalprover.up.railway.app/dashboard |
 
 ---
 
